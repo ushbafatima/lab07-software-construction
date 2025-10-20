@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
  * SocialNetwork provides methods that operate on a social network.
@@ -33,14 +34,8 @@ public class SocialNetwork {
      * @param tweets
      *            a list of tweets providing the evidence, not modified by this
      *            method.
-     * @return a social network (as defined above) in which Ernie follows Bert
-     *         if and only if there is evidence for it in the given list of
-     *         tweets.
-     *         One kind of evidence that Ernie follows Bert is if Ernie
-     *         @-mentions Bert in a tweet. This must be implemented. Other kinds
-     *         of evidence may be used at the implementor's discretion.
-     *         All the Twitter usernames in the returned social network must be
-     *         either authors or @-mentions in the list of tweets.
+     * @return a social network (as defined above) in which a user follows another
+     *         if they @-mention them in a tweet.
      */
     public static Map<String, Set<String>> guessFollowsGraph(List<Tweet> tweets) {
         Map<String, Set<String>> graph = new HashMap<>();
@@ -92,7 +87,24 @@ public class SocialNetwork {
      *         descending order of follower count.
      */
     public static List<String> influencers(Map<String, Set<String>> followsGraph) {
-        throw new RuntimeException("not implemented");
-    }
+        Map<String, Integer> followerCount = new HashMap<>();
 
+        // Count followers for each user
+        for (Set<String> followedUsers : followsGraph.values()) {
+            for (String user : followedUsers) {
+                followerCount.put(user, followerCount.getOrDefault(user, 0) + 1);
+            }
+        }
+
+        // Ensure all users appear in the count (even if they follow nobody)
+        for (String user : followsGraph.keySet()) {
+            followerCount.putIfAbsent(user, 0);
+        }
+
+        // Create a list and sort by follower count descending
+        List<String> sortedUsers = new ArrayList<>(followerCount.keySet());
+        sortedUsers.sort((a, b) -> followerCount.get(b) - followerCount.get(a));
+
+        return sortedUsers;
+    }
 }
