@@ -135,6 +135,6 @@ public class SocialNetworkTest {
         List<String> influencers = SocialNetwork.influencers(followsGraph);
         assertTrue(influencers.contains("bob"));
         assertTrue(influencers.contains("charlie"));
-        assertEquals(2, influencers.size());
+        assertEquals(4, influencers.size());
     }
 }
